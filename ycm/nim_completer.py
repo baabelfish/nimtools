@@ -11,22 +11,23 @@ import ycmd.utils
 
 
 TokenTypeMap = {
+    'skAlias':           'alias',
+    'skClosureIterator': 'iterator',
     'skConst':           'const',
     'skEnumField':       'enum',
+    'skField':           'attribute',
     'skForVar':          'var',
     'skIterator':        'iterator',
-    'skClosureIterator': 'iterator',
     'skLabel':           'label',
     'skLet':             'let',
     'skMacro':           'macro',
-    'skParam':           'param',
     'skMethod':          'method',
+    'skParam':           'param',
     'skProc':            'proc',
     'skResult':          'result',
     'skTemplate':        'template',
     'skType':            'type',
     'skVar':             'var',
-    'skAlias':           'alias',
 }
 
 
@@ -37,7 +38,7 @@ def _GetCompletions(cfile, memfile, crow, ccol, ctype):
     try:
         s = socket.socket()
         s.setblocking(True)
-        s.connect(('localhost', 6002))
+        s.connect(('localhost', 6000))
         s.sendall(query)
         f = s.makefile('r')
 
@@ -45,7 +46,7 @@ def _GetCompletions(cfile, memfile, crow, ccol, ctype):
             line = line.strip()
             if len(line) is not 0:
                 completions.append(line)
-                print line
+                print(line)
     except:
         raise RuntimeError("nimsuggest server is not running")
     finally:
@@ -114,7 +115,7 @@ class NimCompleter(Completer):
             splitted = line.split('\t')
             if len(splitted) >= 8:
                 _, ftype, name, signature, ffile, x, y, docstr = splitted
-                addOne(TokenTypeMap.get(ftype, 'Unknown'),
+                addOne(TokenTypeMap.get(ftype, ftype),
                        name.split('.')[-1],
                        signature,
                        signature + '\n\n' + FormatDocStr(docstr))
